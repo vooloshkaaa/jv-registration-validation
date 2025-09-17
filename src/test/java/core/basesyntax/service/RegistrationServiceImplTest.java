@@ -64,4 +64,11 @@ class RegistrationServiceImplTest {
                 () -> registrationService.register(actual));
     }
 
+    @Test
+    void register_nullField_NotOk() {
+        User actual1 = new User();
+        assertThrows(NullPointerException.class,
+                () -> registrationService.register(actual1));
+    }
+
 }
