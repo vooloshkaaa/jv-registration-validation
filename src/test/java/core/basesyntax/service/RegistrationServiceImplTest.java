@@ -9,6 +9,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 class RegistrationServiceImplTest {
+
     private RegistrationService registrationService;
     private User actual;
 
@@ -16,59 +17,67 @@ class RegistrationServiceImplTest {
     void setUp() {
         registrationService = new RegistrationServiceImpl();
         actual = new User();
-        actual.setId((long)1);
     }
 
     @Test
     void register_validData_Ok() {
         actual.setAge(20);
-        actual.setLogin("abcdefg");
-        actual.setPassword("abcdefg");
-        assertEquals(registrationService.register(actual), actual);
+        actual.setLogin("validLogin");
+        actual.setPassword("validPass");
+        User registered = registrationService.register(actual);
+        assertEquals(actual.getLogin(), registered.getLogin());
+        assertEquals(actual.getPassword(), registered.getPassword());
+        assertEquals(actual.getAge(), registered.getAge());
     }
 
     @Test
     void register_ageUnder18_notOk() {
         actual.setAge(16);
-        actual.setLogin("abcdeffg");
-        actual.setPassword("abcdefg");
+        actual.setLogin("youngUser");
+        actual.setPassword("password");
         assertThrows(RegistrationException.class,
                 () -> registrationService.register(actual));
     }
 
     @Test
-    void register_loginAlreadyExistsInStorage_NotOk() {
+    void register_loginAlreadyExistsInStorage_notOk() {
         actual.setAge(20);
-        actual.setLogin("abcdefgh");
-        actual.setPassword("abcdefgh");
+        actual.setLogin("duplicateLogin");
+        actual.setPassword("password");
         registrationService.register(actual);
+
+        User duplicate = new User();
+        duplicate.setAge(25);
+        duplicate.setLogin("duplicateLogin");
+        duplicate.setPassword("anotherPass");
+
         assertThrows(RegistrationException.class,
-                () -> registrationService.register(actual));
+                () -> registrationService.register(duplicate));
     }
 
     @Test
-    void register_loginHasUnder6Characters_NotOk() {
+    void register_loginTooShort_notOk() {
         actual.setAge(20);
         actual.setLogin("abc");
-        actual.setPassword("1234567");
+        actual.setPassword("validPass");
         assertThrows(RegistrationException.class,
                 () -> registrationService.register(actual));
     }
 
     @Test
-    void register_passwordHasUnder6Characters_NotOk() {
+    void register_passwordTooShort_notOk() {
         actual.setAge(20);
-        actual.setLogin("1234567");
-        actual.setPassword("abc");
+        actual.setLogin("validLogin");
+        actual.setPassword("123");
         assertThrows(RegistrationException.class,
                 () -> registrationService.register(actual));
     }
 
     @Test
-    void register_nullField_NotOk() {
-        User actual1 = new User();
-        assertThrows(NullPointerException.class,
-                () -> registrationService.register(actual1));
+    void register_nullFields_notOk() {
+        User emptyUser = new User();
+        assertThrows(RegistrationException.class,
+                () -> registrationService.register(emptyUser));
     }
 
 }
