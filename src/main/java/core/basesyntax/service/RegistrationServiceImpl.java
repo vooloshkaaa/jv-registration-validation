@@ -27,16 +27,20 @@ public class RegistrationServiceImpl implements RegistrationService {
         }
 
         if (user.getLogin().length() < MIN_LOGIN_LENGTH) {
-            throw new RegistrationException("Login must be at least " + MIN_LOGIN_LENGTH + " characters");
+            throw new RegistrationException("Login must be at least "
+                    + MIN_LOGIN_LENGTH + " characters");
         }
         if (user.getPassword().length() < MIN_PASSWORD_LENGTH) {
-            throw new RegistrationException("Password must be at least " + MIN_PASSWORD_LENGTH + " characters");
+            throw new RegistrationException("Password must be at least "
+                    + MIN_PASSWORD_LENGTH + " characters");
         }
         if (user.getAge() < MIN_AGE) {
-            throw new RegistrationException("User cannot be under " + MIN_AGE + " years old");
+            throw new RegistrationException("User cannot be under "
+                    + MIN_AGE + " years old");
         }
         if (storageDao.get(user.getLogin()) != null) {
-            throw new RegistrationException("User with login '" + user.getLogin() + "' already exists");
+            throw new RegistrationException("User with login '"
+                    + user.getLogin() + "' already exists");
         }
 
         storageDao.add(user);
